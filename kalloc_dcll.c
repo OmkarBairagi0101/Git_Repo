@@ -14,13 +14,13 @@ extern char end[]; // first address after kernel loaded from ELF file
                    // defined by the kernel linker script in kernel.ld
 
 struct run {
-  struct run *next;
   struct run *prev;
+  struct run *next;
 };
 
 struct {
+  int use_lock;	
   struct spinlock lock;
-  int use_lock;
   struct run *freelist1, *freelist2;
 } kmem;
 
@@ -33,10 +33,10 @@ void
 kinit1(void *vstart, void *vend)
 {
   initlock(&kmem.lock, "kmem");
-  kmem.use_lock = 0;
-  kmem.freelist1 = NULL;
-  kmem.freelist2 = NULL;
   freerange(vstart, vend);
+  kmem.use_lock = 0;
+  kmem.freelist2 = NULL;	
+  kmem.freelist1 = NULL;
 }
 
 void
